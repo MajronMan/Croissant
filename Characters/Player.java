@@ -1,15 +1,9 @@
-/**
- * Singleton
- */
 package Croissant.Characters;
 
 import Croissant.Abstract.IMoving;
-import Croissant.Characters.Fighting;
 import Croissant.Engine.GameController;
 import Croissant.Items.Equipment;
 import Croissant.Items.Item;
-import Croissant.Level.Cell;
-import Croissant.Level.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -21,52 +15,54 @@ public class Player extends Fighting implements IMoving {
 	private Item Backpack;
 	private Equipment Eq;
 	private String Race;
-	public int posX;
-    public int posY;
-    public GameController gameController;
+	private int posX;
+    private int posY;
+    private GameController gameController;
 
     public Player(GameController gameController){
         this.gameController = gameController;
-        /*
-        while(!gameController.currentMap.getCellAt(posX, posY).Walkable){
-            posX++;
-            if(posX > gameController.currentMap.x){
 
+        while(!gameController.currentMap.getCellAt(posX, posY).getWalkable()){
+            posX++;
+            if(posX >= gameController.currentMap.x) {
+                posX = 0;
+                posY = (posY + 1) % gameController.currentMap.y;
             }
-            posY = (posY+1)%gameController.currentMap.y;
         }
-        */
+
     }
 
 	public void Move(String dir){
-        switch(dir){
+        gameController.currentMap.getCellAt(posX, posY).draw(gameController.getGraphicsContext());
+        int destx = posX, desty = posY;
+        switch(dir) {
             case "LEFT":
-                posX--;
+                destx = Math.max(0, posX - 1);
                 break;
             case "RIGHT":
-                posX++;
+                destx = Math.min(posX + 1, gameController.currentMap.x - 1);
                 break;
             case "UP":
-                posY--;
+                desty = Math.max(0, posY - 1);
                 break;
             case "DOWN":
-                posY++;
+                desty = Math.min(posY + 1, gameController.currentMap.y - 1);
                 break;
         }
-
-        int nx = Math.min(gameController.currentMap.x-1, Math.max(0, posX));
-        int ny = Math.min(gameController.currentMap.y-1, Math.max(0, posY));
-        if(gameController.currentMap.getCellAt(nx, ny).getWalkable()){
-            posX = nx;
-            posY = ny;
+        if(gameController.currentMap.getCellAt(destx, desty).getWalkable()) {
+            posX = destx;
+            posY = desty;
         }
-	}
+        gameController.currentMap.draw(gameController.getGraphicsContext());
+        draw();
+    }
 
 	public void Move(){
 
     }
 
-    public void Draw(GraphicsContext graphicsContext){
+    public void draw(){
+        GraphicsContext graphicsContext = gameController.getGraphicsContext();
         graphicsContext.setFill(Color.DARKSLATEBLUE);
         graphicsContext.fillRect(posX *cellSize, posY*cellSize, cellSize-1, cellSize-1);
     }

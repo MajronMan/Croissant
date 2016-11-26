@@ -1,11 +1,14 @@
 package Croissant.Level;
 
+import Croissant.Abstract.Graph;
+import Croissant.Abstract.Vector;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
 import java.util.ArrayList;
-import sun.misc.Queue;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 import static Croissant.Engine.Constants.cellSize;
@@ -16,23 +19,43 @@ public class Map {
 	private int depth;
     public int x;
     public int y;
+    public ArrayList<Room> Rooms = new ArrayList<>();
+    public int[][] distances;
+    public Graph<Room> roomGraph;
+    public Iterator mstIterator;
 
-	public Map() {
-        x = 30;
-        y = 30;
+    public Map() {
+        x = 120;
+        y = 70;
         Cells = new Cell[y][x];
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
-                Cells[i][j] = new Cell(i, j);
+                Cells[i][j] = new Cell(j, i);
             }
         }
-        //SE();
-        //BFS();
-        //recursive(0, x, 0, y);
-        gameOfLife(0);
+        generateRooms();
+        getGraph();
+        drawCorridors();
 	}
 
-	private boolean outOfBounds(int x, int y){
+    private void drawCorridors() {
+        for(Graph.Edge e : roomGraph.Kruskal()){
+            ((Room) e.getFrom().getValue()).drawPath(this, (Room) e.getTo().getValue());
+        }
+    }
+/*
+	public void drawNextEdge(){
+        try {
+            Graph.Edge e = (Graph.Edge) mstIterator.next();
+            ((Room) e.getFrom().getValue()).drawPath(this, (Room) e.getTo().getValue());
+            System.out.println(e.getFrom().getValue() + "->" + e.getTo().getValue());
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+    */
+
+	boolean outOfBounds(int x, int y){
         return x<0 || x >= this.x || y < 0 || y >= this.y;
     }
 
@@ -42,6 +65,53 @@ public class Map {
         return Cells[y][x];
     }
 
+    public boolean createCell(int x, int y, Class<? extends Cell> cls) {
+        try {
+            Cells[y][x] = cls.newInstance();
+            Cells[y][x].setXY(x, y);
+        }catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean createCells(Collection<Vector> positions, Class<? extends Cell> cls){
+        for (Vector v :
+                positions) {
+            if (!createCell(v.getX(), v.getY(), cls)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean newRoom() {
+        Random r = new Random();
+        int div = Math.min(x, y);
+        Room room = new Room(r.nextInt(x), r.nextInt(y), 7+r.nextInt(div/6), 7+r.nextInt(div/6));
+        return room.carve(this);
+    }
+
+    public void generateRooms(){
+        for(int i=0; i < 200; i = newRoom()? i: i+1);
+    }
+
+
+    public void getGraph(){
+        int n = Rooms.size();
+        distances = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            Rooms.get(i).number = i;
+            for (int j = 0; j < n; j++) {
+                distances[i][j] = Rooms.get(i).distance(Rooms.get(j));
+            }
+        }
+        Room[] rooms = new Room[Rooms.size()];
+        Rooms.toArray(rooms);
+        roomGraph = new Graph<>(rooms, distances);
+    }
+/*
     private ArrayList<Cell> neighbours(int i, int j){
         ArrayList<Cell> neigh = new ArrayList<>();
         for (int[] dir :
@@ -52,6 +122,39 @@ public class Map {
             }
         }
         return neigh;
+    }
+
+    private ArrayList<Room> getNeighbours(int i){
+        ArrayList<Room> ret = new ArrayList<>();
+        for (int j = 0; j < Rooms.size(); j++) {
+            if(i != j && !Rooms.get(j).visited){
+                ret.add(Rooms.get(j));
+            }
+        }
+        return ret;
+    }
+
+    private void Recurse(int i){
+        ArrayList<Room> neigh = getNeighbours(i);
+        while(!neigh.isEmpty()) {
+            Room room = neigh.get(0);
+            neigh.remove(0);
+            room.visited = true;
+            room.drawPath(this, Rooms.get(i));
+            Recurse(room.number);
+        }
+    }
+
+    private void RoomDFS(){
+        for (int i = 0; i < Rooms.size(); i++) {
+            Room room = Rooms.get(i);
+            if(!room.visited)
+            {
+                room.visited = true;
+                Recurse(i);
+            }
+
+        }
     }
 
     private void BFS(){
@@ -177,7 +280,6 @@ public class Map {
         }
     }
 
-    /*
 	private boolean backtrack(int cx, int cy){
         if(outOfBounds(cx, cy)) return false;
         switch(Cells[cy][cx].Walkable) {
@@ -203,13 +305,11 @@ public class Map {
     */
 
 	public void draw(GraphicsContext graphicsContext) {
-        graphicsContext.setStroke(Color.ALICEBLUE);
-        for(Cell cellsRow[] : Cells)
-            for(Cell cell: cellsRow) {
-                graphicsContext.setFill(cell.color);
-                graphicsContext.strokeRect(cellSize * cell.x, cellSize * cell.y, cellSize, cellSize);
-                graphicsContext.fillRect(cellSize * cell.x, cellSize * cell.y, cellSize, cellSize);
+        graphicsContext.setStroke(Color.BLACK);
+        for(Cell cellsRow[] : Cells) {
+            for (Cell cell : cellsRow) {
+                cell.draw(graphicsContext);
             }
-
+        }
 	}
 }

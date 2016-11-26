@@ -6,6 +6,6 @@ package Croissant.Engine;
 public class Constants {
     public static final int SW = 1366;
     public static final int SH = 786;
-    public static final int cellSize = 20;
+    public static final int cellSize = 10;
 
 }

@@ -35,6 +35,7 @@ public class Main extends Application {
 
         theScene.setOnKeyPressed(gameController::HandleInput);
 
+        /*
         new AnimationTimer()
         {
             private long t;
@@ -47,6 +48,7 @@ public class Main extends Application {
                 }
             }
         }.start();
+        */
 
         primaryStage.show();
     }

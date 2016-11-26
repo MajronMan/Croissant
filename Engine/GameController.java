@@ -1,6 +1,7 @@
 package Croissant.Engine;
 
 import Croissant.Characters.Player;
+import Croissant.Level.Cell;
 import Croissant.Level.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
@@ -20,21 +21,18 @@ public class GameController {
     }
 
     public void HandleInput(KeyEvent e) {
-
-			String code = e.getCode().toString();
-			thePlayer.Move(code);
-			currentMap.draw(graphicsContext);
-			thePlayer.Draw(graphicsContext);
-	}
-
-	public void Tick() {
-		// TODO - implement GameController.Tick
-		throw new UnsupportedOperationException();
+        String code = e.getCode().toString();
+        thePlayer.Move(code);
 	}
 
 	public void BeginGame(){
         currentMap = new Map();
 		thePlayer = new Player(this);
 		currentMap.draw(graphicsContext);
+		thePlayer.draw();
     }
+
+    public GraphicsContext getGraphicsContext(){
+		return graphicsContext;
+	}
 }
