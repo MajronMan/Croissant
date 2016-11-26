@@ -8,23 +8,22 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Random;
-
-import static Croissant.Engine.Constants.cellSize;
 
 public class Map {
 
 	private Cell[][] Cells;
-	private int depth;
+	public int depth;
     public int x;
     public int y;
     public ArrayList<Room> Rooms = new ArrayList<>();
     public int[][] distances;
     public Graph<Room> roomGraph;
-    public Iterator mstIterator;
+    private Vector exit = null;
+    private Vector entry = null;
 
-    public Map() {
+    public Map(int depth) {
+        this.depth = depth;
         x = 120;
         y = 70;
         Cells = new Cell[y][x];
@@ -36,11 +35,12 @@ public class Map {
         generateRooms();
         getGraph();
         drawCorridors();
+        createExits();
 	}
 
     private void drawCorridors() {
         for(Graph.Edge e : roomGraph.Kruskal()){
-            ((Room) e.getFrom().getValue()).drawPath(this, (Room) e.getTo().getValue());
+            ((Room) e.getFrom().getValue()).drawPath((Room) e.getTo().getValue());
         }
     }
 /*
@@ -89,8 +89,8 @@ public class Map {
     private boolean newRoom() {
         Random r = new Random();
         int div = Math.min(x, y);
-        Room room = new Room(r.nextInt(x), r.nextInt(y), 7+r.nextInt(div/6), 7+r.nextInt(div/6));
-        return room.carve(this);
+        Room room = new Room(r.nextInt(x), r.nextInt(y), 7+r.nextInt(div/6), 7+r.nextInt(div/6), this);
+        return room.carve();
     }
 
     public void generateRooms(){
@@ -312,4 +312,40 @@ public class Map {
             }
         }
 	}
+
+	private void createExits(){
+        Random r = new Random();
+        int number = r.nextInt(Rooms.size());
+        exit = Rooms.get(number).addExit(1);
+        if(depth > 0 ){
+            int number2 = r.nextInt(Rooms.size());
+            while(number == number2){
+                number2 = r.nextInt(Rooms.size());
+            }
+            entry = Rooms.get(number2).addExit(-1);
+        }
+    }
+
+    public Vector exitPosition() {
+        return exit;
+    }
+
+    public Vector entryPosition(){
+        return entry;
+    }
+
+    public void createEntry(Vector v){
+        entry = v;
+        createCell(v.getX(), v.getY(), Exit.class);
+        Exit ex = (Exit) getCellAt(v.getX(), v.getY());
+        ex.setXY(v.getX(), v.getY());
+        ex.setElevate(-1);
+    }
+    public int isExit(Vector v){
+        if( v.equals(exit))
+            return 1;
+        if( v.equals(entry))
+            return -1;
+        return 0;
+    }
 }

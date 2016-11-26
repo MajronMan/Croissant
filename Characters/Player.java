@@ -1,6 +1,7 @@
 package Croissant.Characters;
 
 import Croissant.Abstract.IMoving;
+import Croissant.Abstract.Vector;
 import Croissant.Engine.GameController;
 import Croissant.Items.Equipment;
 import Croissant.Items.Item;
@@ -53,8 +54,6 @@ public class Player extends Fighting implements IMoving {
             posX = destx;
             posY = desty;
         }
-        gameController.currentMap.draw(gameController.getGraphicsContext());
-        draw();
     }
 
 	public void Move(){
@@ -65,5 +64,14 @@ public class Player extends Fighting implements IMoving {
         GraphicsContext graphicsContext = gameController.getGraphicsContext();
         graphicsContext.setFill(Color.DARKSLATEBLUE);
         graphicsContext.fillRect(posX *cellSize, posY*cellSize, cellSize-1, cellSize-1);
+    }
+
+    public Vector getPosition() {
+        return new Vector(posX, posY);
+    }
+
+    public void setPosition(Vector position) {
+        this.posX = position.getX();
+        this.posY = position.getY();
     }
 }

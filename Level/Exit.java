@@ -8,9 +8,16 @@ import javafx.scene.paint.Color;
 public class Exit extends Cell {
     int elevate;
 
+    public Exit(){
+        this(0, 0);
+    }
     public Exit(int x, int y){
         this.x = x;
         this.y = y;
-        color = Color.GREENYELLOW;
+        walkable = true;
+    }
+    public void setElevate(int e){
+        elevate = e;
+        color = e > 0? Color.GREENYELLOW : Color.DARKGREEN;
     }
 }

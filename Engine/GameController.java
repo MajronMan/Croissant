@@ -1,5 +1,6 @@
 package Croissant.Engine;
 
+import Croissant.Abstract.Vector;
 import Croissant.Characters.Player;
 import Croissant.Level.Cell;
 import Croissant.Level.Map;
@@ -23,13 +24,33 @@ public class GameController {
     public void HandleInput(KeyEvent e) {
         String code = e.getCode().toString();
         thePlayer.Move(code);
+        int delta = currentMap.isExit(thePlayer.getPosition());
+        int index = delta + currentMap.depth;
+        if(delta != 0 && index >= 0) {
+            try {
+                currentMap = Maps.get(index);
+            } catch (Exception ex) {
+                System.out.println("new map");
+                currentMap = new Map(index);
+                Maps.add(currentMap);
+            } finally {
+                currentMap.draw(graphicsContext);
+                if(delta > 0)
+                    thePlayer.setPosition(currentMap.entryPosition());
+                if(delta < 0)
+                    thePlayer.setPosition(currentMap.exitPosition());
+            }
+        }
+        thePlayer.draw();
 	}
 
 	public void BeginGame(){
-        currentMap = new Map();
+        currentMap = new Map(0);
+        Maps.add(currentMap);
 		thePlayer = new Player(this);
 		currentMap.draw(graphicsContext);
 		thePlayer.draw();
+        currentMap.createEntry(thePlayer.getPosition());
     }
 
     public GraphicsContext getGraphicsContext(){

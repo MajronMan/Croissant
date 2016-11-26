@@ -1,7 +1,6 @@
 package Croissant.Level;
 
 import Croissant.Abstract.Vector;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,8 +14,10 @@ public class Room{
     private int w;
     private int h;
     int number;
+    private Map myMap;
 
-    public Room(int x, int y, int w, int h){
+    public Room(int x, int y, int w, int h, Map map){
+        myMap = map;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -52,56 +53,41 @@ public class Room{
         return result;
     }
 
-    public boolean outtaBounds(Map map){
-        return x>0 && y>0 && x+w < map.x && y+h < map.y;
-    }
-
-    public boolean collides(Map map){
-        if(map.outOfBounds(x, y) || map.outOfBounds(x+w, y+h))
+    public boolean collides(){
+        if(myMap.outOfBounds(x, y) || myMap.outOfBounds(x+w, y+h))
             return true;
         // leave at least 3 free cells
-        for (int i = Math.max(0, x-3); i < Math.min(map.x, x+w+3); i++) {
-            for (int j = Math.max(0, y-3); j < Math.min(map.y, y+h+3); j++) {
-                if(map.getCellAt(i, j).getWalkable())
+        for (int i = Math.max(0, x-3); i < Math.min(myMap.x, x+w+3); i++) {
+            for (int j = Math.max(0, y-3); j < Math.min(myMap.y, y+h+3); j++) {
+                if(myMap.getCellAt(i, j).getWalkable())
                     return true;
             }
         }
         return false;
     }
 
-    public boolean carve(Map map){
-        if(collides(map)) return false;
-        createBorder(map);
+    public boolean carve(){
+        if(collides()) return false;
+        createBorder();
         for (int i = x+1; i < x+w-1; i++) {
             for (int j = y+1; j < y+h-1; j++) {
-                map.createCell(i, j, Pavement.class);
+                myMap.createCell(i, j, Pavement.class);
             }
         }
-        map.Rooms.add(this);
+        myMap.Rooms.add(this);
         return true;
     }
-    private void createBorder(Map map){
+    private void createBorder(){
         ArrayList<Vector> vectors = new ArrayList<>();
-        for(int i = x; i< x+w; i++){
+        for(int i = x +1; i< x+w-1; i++){
             vectors.add(new Vector(i, y));
             vectors.add(new Vector(i, y+h-1));
         }
-        for(int i=y; i<y+h; i++){
+        for(int i=y+1; i<y+h-1; i++){
             vectors.add(new Vector(x, i));
             vectors.add(new Vector(x+w-1, i));
         }
-        map.createCells(vectors, Wall.class);
-    }
-
-    public void indicateNumber(Map map) {
-        int c = 0;
-        for (int i = x; i < x + w; i++) {
-            for (int j = y; j < y + h; j++) {
-                if(c == number) return;
-                c++;
-                map.getCellAt(i, j).color = Color.RED;
-            }
-        }
+        myMap.createCells(vectors, Wall.class);
     }
 
     private int sign(int n){
@@ -110,7 +96,7 @@ public class Room{
         return 1;
     }
 
-    public void drawPath(Map map, Room to){
+    public void drawPath(Room to){
         int cx = middleX(), cy = middleY(), tx = to.middleX(), ty = to.middleY();
         int dx = sign(tx-cx);
         int dy = sign(ty-cy);
@@ -118,26 +104,26 @@ public class Room{
 
         if(x > tx) {
             cx = x-1;
-            map.createCell(cx + 1, cy, Door.class);
+            myMap.createCell(cx + 1, cy, Door.class);
         }
         else if (x + w - 1 < tx) {
             cx = x+w;
-            map.createCell(cx - 1, cy, Door.class);
+            myMap.createCell(cx - 1, cy, Door.class);
         }
         else if (y > ty) {
             cy = y-1;
-            map.createCell(cx, cy + 1, Door.class);
+            myMap.createCell(cx, cy + 1, Door.class);
         }
         else if(y+h-1 < ty) {
             cy = y+h;
-            map.createCell(cx, cy-1, Door.class);
+            myMap.createCell(cx, cy-1, Door.class);
         }
 
-        map.createCell(cx, cy, Pavement.class);
+        myMap.createCell(cx, cy, Pavement.class);
         cx += dx;
-        map.createCell(cx, cy, Pavement.class);
+        myMap.createCell(cx, cy, Pavement.class);
         cy+=dy;
-        map.createCell(cx, cy, Pavement.class);
+        myMap.createCell(cx, cy, Pavement.class);
         while(cx != tx || cy != ty){
 
             if(r.nextInt(6) == 0) {
@@ -152,11 +138,11 @@ public class Room{
                 else
                     cx += dx;
             }
-            if(map.getCellAt(cx, cy).getClass().equals(Wall.class)) {
-                map.createCell(cx, cy, Door.class);
+            if(myMap.getCellAt(cx, cy).getClass().equals(Wall.class)) {
+                myMap.createCell(cx, cy, Door.class);
                 return;
             }
-            map.createCell(cx, cy, Pavement.class);
+            myMap.createCell(cx, cy, Pavement.class);
         }
     }
 
@@ -172,5 +158,14 @@ public class Room{
     public Vector bottom() {return new Vector(middleX(), y + h - 1); }
     public int distance(Room a){
         return Math.abs(middleX() - a.middleX()) + Math.abs(middleY() - a.middleY());
+    }
+
+    public Vector addExit(int elevate) {
+        Random r = new Random();
+        int ex = middleX() + r.nextInt(3);
+        int ey = middleY() + r.nextInt(3);
+        myMap.createCell(ex, ey, Exit.class);
+        ((Exit)myMap.getCellAt(ex, ey)).setElevate(elevate);
+        return new Vector(ex, ey);
     }
 }
