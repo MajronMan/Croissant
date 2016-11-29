@@ -63,7 +63,7 @@ public class Player extends Fighting implements IMoving {
     public void draw(){
         GraphicsContext graphicsContext = gameController.getGraphicsContext();
         graphicsContext.setFill(Color.DARKSLATEBLUE);
-        graphicsContext.fillRect(posX *cellSize, posY*cellSize, cellSize-1, cellSize-1);
+        graphicsContext.fillOval(posX *cellSize, posY*cellSize, cellSize-1, cellSize-1);
     }
 
     public Vector getPosition() {
