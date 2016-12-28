@@ -1,6 +1,7 @@
 package Level;
 
 import Abstract.Vector;
+import Items.Item;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -75,6 +76,7 @@ public class Room{
             }
         }
         myMap.Rooms.add(this);
+        placeItem();
         return true;
     }
     private void createBorder(){
@@ -125,7 +127,8 @@ public class Room{
         cy+=dy;
         myMap.createCell(cx, cy, Pavement.class);
         while(cx != tx || cy != ty){
-
+            dx = sign(tx-cx);
+            dy = sign(ty-cy);
             if(r.nextInt(6) == 0) {
                 if (cx != tx)
                     cx += dx;
@@ -167,5 +170,13 @@ public class Room{
         myMap.createCell(ex, ey, Exit.class);
         ((Exit)myMap.getCellAt(ex, ey)).setElevate(elevate);
         return new Vector(ex, ey);
+    }
+
+    public boolean placeItem(){
+        Random r = new Random();
+        int ix = x+1+r.nextInt(w-2), iy = y+1+r.nextInt(h-2);
+        Pavement cell = (Pavement) myMap.getCellAt(ix, iy);
+        cell.addContent(new Item(cell));
+        return true;
     }
 }

@@ -1,27 +1,42 @@
 package Engine;
 
-import Abstract.Vector;
 import Characters.Player;
-import Level.Cell;
 import Level.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
+import static Engine.Constants.cellSize;
+import static Engine.Constants.mapX;
+import static Engine.Constants.mapY;
+
 public class GameController {
+    private static GameController ourInstance = new GameController();
+    public static GameController getInstance() {
+        return ourInstance;
+    }
 
 	private ArrayList<GameObject> Actors = new ArrayList<>();
 	private ArrayList<Map> Maps = new ArrayList<>();
     private GraphicsContext graphicsContext;
-    public Map currentMap;
-	public Player thePlayer;
+    private Map currentMap;
+	private Player thePlayer;
 
-    public GameController(GraphicsContext graphicsContext) {
-        this.graphicsContext = graphicsContext;
+    public GameController() {}
+
+    public static void handleKeyboardInput(KeyEvent e) {
+        ourInstance._handleKeyboardInput(e);
+	}
+
+
+    public static void handleMouseInput(MouseEvent mouseEvent) {
+        ourInstance._handleMouseInput(mouseEvent);
     }
 
-    public void HandleInput(KeyEvent e) {
+	private void _handleKeyboardInput(KeyEvent e){
         String code = e.getCode().toString();
         thePlayer.Move(code);
         int delta = currentMap.isExit(thePlayer.getPosition());
@@ -34,26 +49,55 @@ public class GameController {
                 currentMap = new Map(index);
                 Maps.add(currentMap);
             } finally {
-                currentMap.draw(graphicsContext);
+                currentMap.draw();
                 if(delta > 0)
                     thePlayer.setPosition(currentMap.entryPosition());
                 if(delta < 0)
                     thePlayer.setPosition(currentMap.exitPosition());
             }
         }
+        thePlayer.raytrace();
+        currentMap.draw();
         thePlayer.draw();
-	}
-
-	public void BeginGame(){
-        currentMap = new Map(0);
-        Maps.add(currentMap);
-		thePlayer = new Player(this);
-		currentMap.draw(graphicsContext);
-		thePlayer.draw();
-        currentMap.createEntry(thePlayer.getPosition());
     }
 
-    public GraphicsContext getGraphicsContext(){
-		return graphicsContext;
+    private void _handleMouseInput(MouseEvent e){
+        int x = (int) e.getX()/cellSize, y = (int) e.getY()/cellSize;
+        if(x >= mapX || y >= mapY)
+            return;
+        currentMap.getCellAt(x, y).Interact();
+    }
+
+	public static void BeginGame(){
+        ourInstance.currentMap = new Map(0);
+        ourInstance.Maps.add(ourInstance.currentMap);
+        ourInstance.thePlayer = new Player();
+        ourInstance.thePlayer.raytrace();
+        ourInstance.currentMap.draw();
+        ourInstance.thePlayer.draw();
+        ourInstance.currentMap.createEntry(ourInstance.thePlayer.getPosition());
+    }
+
+    public static GraphicsContext getGraphicsContext(){
+		return ourInstance.graphicsContext;
 	}
+
+	public static void setGraphicsContext(GraphicsContext gc) { ourInstance.graphicsContext = gc; }
+
+    public static Map getCurrentMap() {
+        return ourInstance.currentMap;
+    }
+
+    public static void setCurrentMap(Map currentMap) {
+        ourInstance.currentMap = currentMap;
+    }
+
+    public static Player getPlayer() {
+        return ourInstance.thePlayer;
+    }
+
+    public static void setPlayer(Player thePlayer) {
+        ourInstance.thePlayer = thePlayer;
+    }
+
 }

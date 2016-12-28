@@ -12,6 +12,11 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector(double r, double alfa){
+        x = (int) Math.round(r * Math.cos(alfa));
+        y = (int) Math.round(r * Math.sin(alfa));
+    }
+
     public int getX() {
         return x;
     }
@@ -26,6 +31,14 @@ public class Vector {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 
     @Override
@@ -46,4 +59,42 @@ public class Vector {
         result = 31 * result + y;
         return result;
     }
+
+    public Vector sum(Vector other){
+        return new Vector(x+other.x, y+other.y);
+    }
+
+    public Vector add(int dx, int dy){
+        x += dx;
+        y += dy;
+        return this;
+    }
+
+    public double alfa(){
+        return Math.atan2(y, x);
+    }
+
+    public double r() { return Math.sqrt(x*x + y*y);}
+
+    public Vector snapToDir(){
+        double nx = x/r(), ny = y/r();
+        return new Vector((int)Math.round(nx), (int)Math.round(ny));
+    }
+
+    public Vector substract(Vector v){
+        return new Vector(x - v.x, y-v.y);
+    }
+
+    public Vector getDelta(Vector v){
+        return v.substract(this).snapToDir();
+    }
+
+    public Vector opposite(){
+        return new Vector(-x, -y);
+    }
+
+    public Vector rotate(double degAngle){
+        return new Vector(r(), alfa()+Math.toRadians(degAngle));
+    }
+
 }

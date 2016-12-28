@@ -1,21 +1,22 @@
 package Characters;
 
+import Abstract.Enums.StatTypes;
+import Abstract.Interfaces.IMoving;
 import Engine.GameObject;
 import Items.Stat;
 
-public class Fighting extends GameObject {
+import java.util.HashMap;
 
-	private Stat HP;
-	private Stat MP;
-	private Stat Attack;
-	private Stat Defense;
-	private Stat Dexterity;
-	private Stat Intelligence;
-	private Stat Charisma;
+public abstract class Fighting extends GameObject implements IMoving {
+
+	protected HashMap<StatTypes, Stat> stats = new HashMap<>();
+    protected boolean alive;
 
 	public void Attack() {
 		// TODO - implement Fighting.Attack
 		throw new UnsupportedOperationException();
 	}
+
+
 
 }

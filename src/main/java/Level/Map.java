@@ -1,7 +1,9 @@
 package Level;
 
 import Abstract.Graph;
+import Abstract.Interfaces.IDrawable;
 import Abstract.Vector;
+import Engine.GameController;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -10,7 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-public class Map {
+import static Engine.Constants.mapX;
+import static Engine.Constants.mapY;
+
+public class Map implements IDrawable{
 
 	private Cell[][] Cells;
 	public int depth;
@@ -24,12 +29,13 @@ public class Map {
 
     public Map(int depth) {
         this.depth = depth;
-        x = 120;
-        y = 70;
+        x = mapX;
+        y = mapY;
         Cells = new Cell[y][x];
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
                 Cells[i][j] = new Cell(j, i);
+                Cells[i][j].setMap(this);
             }
         }
         generateRooms();
@@ -42,6 +48,15 @@ public class Map {
         for(Graph.Edge e : roomGraph.Kruskal()){
             ((Room) e.getFrom().getValue()).drawPath((Room) e.getTo().getValue());
         }
+    }
+
+    public void hide(){
+        for (Cell[] row : Cells) {
+            for (Cell c: row) {
+                c.setVisible(false);
+            }
+        }
+        draw();
     }
 /*
 	public void drawNextEdge(){
@@ -62,13 +77,22 @@ public class Map {
     private int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     public Cell getCellAt(int x, int y){
-        return Cells[y][x];
+        try {
+            return Cells[y][x];
+        }catch(ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+    }
+
+    public Cell getCellAt(Vector v){
+        return getCellAt(v.getX(), v.getY());
     }
 
     public boolean createCell(int x, int y, Class<? extends Cell> cls) {
         try {
             Cells[y][x] = cls.newInstance();
             Cells[y][x].setXY(x, y);
+            Cells[y][x].setMap(this);
         }catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             return false;
@@ -189,9 +213,9 @@ public class Map {
             }
         }
     }
-
+*/
     private int dirs9[][] = {{1, 1}, {0, 1}, {1, 0}, {0, -1}, {-1, -1}, {-1, 0}, {1, -1}, {-1, 1}};
-    private ArrayList<Cell> lifeNeighbours(int i, int j){
+    public ArrayList<Cell> neighbours(int i, int j){
         ArrayList<Cell> ret = new ArrayList<>();
         for (int[] dir :
                 dirs9) {
@@ -202,6 +226,7 @@ public class Map {
         }
         return ret;
     }
+    /*
     public void gameOfLife(int epoch){
         Random r = new Random(System.nanoTime());
         for (Cell[] row :
@@ -304,11 +329,12 @@ public class Map {
     }
     */
 
-	public void draw(GraphicsContext graphicsContext) {
+	public void draw() {
+        GraphicsContext graphicsContext = GameController.getGraphicsContext();
         graphicsContext.setStroke(Color.BLACK);
         for(Cell cellsRow[] : Cells) {
             for (Cell cell : cellsRow) {
-                cell.draw(graphicsContext);
+                cell.draw();
             }
         }
 	}

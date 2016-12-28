@@ -1,11 +1,12 @@
 package Characters;
 
+import Abstract.Interfaces.IContainer;
 import Items.Item;
 
-public class Enemy extends Fighting implements Abstract.IMoving, Abstract.IInteractable, Abstract.IContainer {
+public class Enemy extends Fighting implements IContainer {
 
-	private boolean Asleep;
-	private Item Drop;
+	private boolean asleep;
+	private Item drop;
 
 	public void Flee() {
 		// TODO - implement Enemy.Flee
@@ -13,7 +14,7 @@ public class Enemy extends Fighting implements Abstract.IMoving, Abstract.IInter
 	}
 
 	@Override
-	public void Move() {
+	public void Move(String dir) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -1,7 +1,7 @@
 package Characters;
 
 import Engine.GameObject;
-import Abstract.IInteractable;
+import Abstract.Interfaces.IInteractable;
 
 public class NPC extends GameObject implements IInteractable {
 

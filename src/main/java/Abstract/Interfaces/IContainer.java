@@ -1,4 +1,4 @@
-package Abstract;
+package Abstract.Interfaces;
 public interface IContainer {
 
 	void Loot();

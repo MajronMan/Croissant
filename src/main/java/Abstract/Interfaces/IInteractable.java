@@ -1,4 +1,4 @@
-package Abstract;
+package Abstract.Interfaces;
 
 public interface IInteractable {
 

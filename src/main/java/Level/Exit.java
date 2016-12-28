@@ -1,5 +1,7 @@
 package Level;
 
+import Abstract.Enums.Visuals;
+import Abstract.Vector;
 import javafx.scene.paint.Color;
 
 /**
@@ -12,12 +14,13 @@ public class Exit extends Cell {
         this(0, 0);
     }
     public Exit(int x, int y){
-        this.x = x;
-        this.y = y;
+        position = new Vector(x, y);
         walkable = true;
     }
     public void setElevate(int e){
         elevate = e;
-        color = e > 0? Color.GREENYELLOW : Color.DARKGREEN;
+        Color color = e > 0? Color.GREENYELLOW : Color.DARKGREEN;
+        setVisual(color, Visuals.Square);
+        mainColor = color;
     }
 }

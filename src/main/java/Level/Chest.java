@@ -1,6 +1,6 @@
 package Level;
 
-import Abstract.IContainer;
+import Abstract.Interfaces.IContainer;
 import Items.Item;
 
 public class Chest implements IContainer {
