@@ -9,4 +9,8 @@ public enum Visuals {
     Diamond,
     Arc,
     Triangle,
+    ArrowU,
+    ArrowD,
+    ArrowR,
+    ArrowL,
 }

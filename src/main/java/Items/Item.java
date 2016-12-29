@@ -48,10 +48,11 @@ public class Item extends GameObject {
 
     @Override
     public void draw() {
-        CellVisibility visibility = getVisibility();
-        if(visibility != null && visibility.isVisible())
-            super.draw();
-        else
-            super.hide();
+//        CellVisibility visibility = getVisibility();
+//        if(visibility != null && visibility.isVisible())
+//            super.draw();
+//        else
+//            super.hide();
+        super.draw();
     }
 }

@@ -23,6 +23,7 @@ public class Player extends Fighting{
 	private ArrayList<Item> backpack = new ArrayList<>();
 	private HashMap<PlayerBody, Equipment> eq = new HashMap<>();
 	private String race;
+    private Vector facing = new Vector(0, -1);
 
     public Player(){
         findFirstWalkable();
@@ -30,7 +31,7 @@ public class Player extends Fighting{
                 PlayerBody.values()) {
             eq.put(part, null);
         }
-        visual = new VisualRepresentation(Color.DARKSLATEBLUE, Visuals.Triangle);
+        visual = new VisualRepresentation(Color.DARKSLATEBLUE, Visuals.ArrowU);
     }
 
     private void findFirstWalkable(){
@@ -54,15 +55,23 @@ public class Player extends Fighting{
         switch(dir) {
             case "LEFT":
                 destx = Math.max(0, posX - 1);
+                visual.setShape(Visuals.ArrowL);
+                facing = new Vector(-1, 0);
                 break;
             case "RIGHT":
                 destx = Math.min(posX + 1, theMap.x - 1);
+                visual.setShape(Visuals.ArrowR);
+                facing = new Vector(1, 0);
                 break;
             case "UP":
                 desty = Math.max(0, posY - 1);
+                visual.setShape(Visuals.ArrowU);
+                facing = new Vector(0, -1);
                 break;
             case "DOWN":
                 desty = Math.min(posY + 1, theMap.y - 1);
+                visual.setShape(Visuals.ArrowD);
+                facing = new Vector(0, 1);
                 break;
         }
         if(theMap.getCellAt(destx, desty).getWalkable()) {
@@ -79,6 +88,10 @@ public class Player extends Fighting{
         eq.put(equipment.getMyPart(), equipment);
     }
 
+    public Vector getFacing() {
+        return facing;
+    }
+
     public void Interact(){
         //some popup on click
     }
@@ -89,7 +102,7 @@ public class Player extends Fighting{
     }
 
     public void raytrace(){
-        GameController.getCurrentMap().getCellAt(position.getX(), position.getY()).getVisibility().raytrace();
+        GameController.getCurrentMap().getCellAt(position.getX(), position.getY()).getVisibility().raytrace(facing);
     }
 
     public int itemsCount() {

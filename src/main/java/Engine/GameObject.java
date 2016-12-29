@@ -92,6 +92,26 @@ public abstract class GameObject implements IDrawable, IInteractable {
                     graphicsContext.strokePolygon(xPoints3, yPoints3, 3);
                 }
                 break;
+            case ArrowU:
+                double xPoints3[] = {x+size/2, x+size, x+size/2, x};
+                double yPoints3[] = {y, y+size, y+2*size/3, y+size};
+                graphicsContext.fillPolygon(xPoints3, yPoints3, 4);
+                break;
+            case ArrowD:
+                double xPoints4[] = {x+size/2, x+size, x+size/2, x};
+                double yPoints4[] = {y+size, y, y+size/3, y};
+                graphicsContext.fillPolygon(xPoints4, yPoints4, 4);
+                break;
+            case ArrowL:
+                double xPoints5[] = {x, x+size, x+2*size/3, x+size};
+                double yPoints5[] = {y+size/2, y, y+size/2, y+size};
+                graphicsContext.fillPolygon(xPoints5, yPoints5, 4);
+                break;
+            case ArrowR:
+                double xPoints6[] = {x+size, x, x+size/3, x};
+                double yPoints6[] = {y+size/2, y, y+size/2, y+size};
+                graphicsContext.fillPolygon(xPoints6, yPoints6, 4);
+                break;
         }
 
 

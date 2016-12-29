@@ -13,6 +13,7 @@ public class Cell extends GameObject implements IDrawable{
     protected CellVisibility visibility;
     protected Color mainColor;
     protected Map map;
+    private double intensity;
 
     public Cell(){this(0, 0);}
 
@@ -41,10 +42,8 @@ public class Cell extends GameObject implements IDrawable{
     public Map getMap(){return map;}
 
     public void draw(){
-        if(visibility.isVisible())
-            super.draw();
-        else
-            super.hide();
+        visual.setColor(Color.BLACK.interpolate(mainColor, visibility.intensity));
+        super.draw();
     }
 
 
@@ -55,8 +54,12 @@ public class Cell extends GameObject implements IDrawable{
     public CellVisibility getVisibility(){
         return visibility;
     }
+
     public void setVisible(boolean visible){
         visibility.visible = visible;
+    }
+    public void setIntensity(double intensity){
+        visibility.intensity = intensity;
     }
 
     @Override
@@ -66,5 +69,9 @@ public class Cell extends GameObject implements IDrawable{
                 ", visibility=" + visibility.visible +
                 ", position=" + position +
                 '}';
+    }
+
+    public double getIntensity() {
+        return visibility.intensity;
     }
 }

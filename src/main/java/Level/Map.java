@@ -53,7 +53,8 @@ public class Map implements IDrawable{
     public void hide(){
         for (Cell[] row : Cells) {
             for (Cell c: row) {
-                c.setVisible(false);
+                if(c.getIntensity() > 0.1)
+                    c.setIntensity(0.15);
             }
         }
         draw();

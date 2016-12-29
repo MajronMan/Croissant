@@ -35,10 +35,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "Vector{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "(" + x + ", " + y + ")";
     }
 
     @Override
@@ -80,6 +77,14 @@ public class Vector {
         double nx = x/r(), ny = y/r();
         return new Vector((int)Math.round(nx), (int)Math.round(ny));
     }
+
+    public double square(){
+        return x*x + y*y;
+    }
+
+    public double distance(Vector v){return substract(v).r();}
+
+    public double distanceSq(Vector v){ return substract(v).square();}
 
     public Vector substract(Vector v){
         return new Vector(x - v.x, y-v.y);

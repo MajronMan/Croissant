@@ -42,5 +42,9 @@ public class VisualRepresentation {
     public void setOutline(Color color) {
         outline = color;
     }
+
+    public void setShape(Visuals shape) {
+        this.shape = shape;
+    }
 }
 
