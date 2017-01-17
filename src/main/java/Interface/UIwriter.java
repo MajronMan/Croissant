@@ -1,8 +1,12 @@
 package Interface;
 
 import Engine.GameController;
+import Engine.Stat;
+import Engine.Statics;
+import Items.Equipment;
 import Items.Item;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -13,8 +17,10 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import static Engine.GameController.getPlayer;
 import static java.lang.ClassLoader.getSystemResource;
 
 /**
@@ -22,45 +28,91 @@ import static java.lang.ClassLoader.getSystemResource;
  */
 public class UIwriter {
     private static Text console;
+    private static ArrayList<String> history = new ArrayList<>();
+    private static int i;
     private static TextArea inventory;
     private static GridPane inventoryItems;
+    private static Text HP;
+    private static ProgressBar HPBar;
+    private static TextArea stats;
 
-    public static void setConsole(Text t){
+    public static void setConsole(Text t) {
         console = t;
     }
 
-    public static void setInventory(TextArea ta){
+    public static void setInventory(TextArea ta) {
         inventory = ta;
     }
 
-    public static void consoleWrite(String s){
+    public static void consoleWrite(String s) {
+        history.add(0, s);
         console.setText(s);
     }
 
-    public static void inventoryChanged(List<Item> backpack){
+    public static void clearHistory() {
+        if(history.size() < 10) return;
+        history.clear();
+        history.add("");
+        console.setText("");
+        i = 0;
+    }
 
+    public static void toggleHistory() {
+        i = (i + 1) % history.size();
+        console.setText(history.get(i));
+    }
+
+    public static void setStats(TextArea ta){
+        stats = ta;
+        ta.setEditable(false);
+        ta.setFocusTraversable(false);
     }
 
     public static void setInventoryItems(GridPane inventoryItems) {
         UIwriter.inventoryItems = inventoryItems;
     }
 
+    public static void setHP(Text HP, ProgressBar HPBar) {
+        UIwriter.HP = HP;
+        UIwriter.HPBar = HPBar;
+    }
+
     public static void itemAdded(Item item) {
-        String name="sword.jpg";
-        URL url = getSystemResource(name);
-        Image image = null;
-        try {
-            image = new Image(url.openStream());
-        } catch (IOException e) {
-            System.out.println("No such image: "+ name);
+        Image image;
+        if (item.getClass() == Equipment.class) {
+            image = Statics.swordImage();
+        } else {
+            image = Statics.potionImage();
         }
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(60);
         imageView.setFitHeight(60);
         Button button = new Button("", imageView);
+        button.setFocusTraversable(false);
         Tooltip tooltip = new Tooltip(item.getName() + '\n' + item.getDescription());
         button.setTooltip(tooltip);
-        int itemsCount = GameController.getPlayer().itemsCount()-1;
-        inventoryItems.add(button, itemsCount/5, itemsCount%5);
+        button.setOnMouseClicked((event) -> {
+            getPlayer().useItem(item);
+            if(item.getClass() != Equipment.class)
+                inventoryItems.getChildren().remove(button);
+        });
+        int itemsCount = getPlayer().itemsCount() - 1;
+        inventoryItems.add(button, itemsCount / 5, itemsCount % 5);
+        consoleWrite("Collected " + item);
+    }
+
+    public static void HPChanged() {
+        Stat[] hps = getPlayer().getHP();
+        HP.setText("HP: " + Integer.toString(hps[0].getValue()));
+        HPBar.setProgress((double) hps[0].getValue() / (double) hps[1].getValue());
+        statsChanged();
+    }
+
+    public static void statsChanged() {
+        StringBuilder sb = new StringBuilder();
+        GameController.getPlayer().getStats().forEach((key, value) -> {
+            sb.append(key).append(": ").append(value.getValue()).append("\n");
+        });
+        stats.setText(sb.toString());
     }
 }

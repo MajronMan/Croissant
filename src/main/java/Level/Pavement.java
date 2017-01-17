@@ -1,12 +1,14 @@
 package Level;
 
+import Characters.Fighting;
+import Engine.GameController;
 import Engine.GameObject;
-import Interface.UIwriter;
 import javafx.scene.paint.Color;
 
 public class Pavement extends Cell {
 
-	private GameObject content;
+	protected GameObject content;
+    protected Fighting pedestrian;
 
     public Pavement(){
         this(0, 0);
@@ -18,6 +20,7 @@ public class Pavement extends Cell {
 
     public Pavement(int x, int y, GameObject content) {
         super(x, y, Color.DARKORANGE);
+        this.visibility = new CellVisibility(false, false, this);
         this.walkable = true;
         this.content = content;
     }
@@ -40,14 +43,34 @@ public class Pavement extends Cell {
     public void draw(){
         super.draw();
         if(content != null)
-            content.draw();
+            content.draw(Color.BLACK.interpolate(content.getVisual().getColor(), visibility.intensity));
+        if(pedestrian != null)
+            pedestrian.draw(Color.BLACK.interpolate(pedestrian.getVisual().getColor(), visibility.intensity));
     }
     @Override
-    public void Interact(){
-        if(content!= null)
-            content.Interact();
-        else{
-            UIwriter.consoleWrite(getClass().getName());
+    public boolean interact(){
+        if(pedestrian != null){
+            GameController.getPlayer().Attack(pedestrian);
+            return true;
         }
+        else if(content!= null) {
+            content.interact();
+            return true;
+        }
+        return false;
+    }
+
+    public GameObject getPedestrian() {
+        return pedestrian;
+    }
+
+    public void addPedestrian(Fighting pedestrian) {
+        this.pedestrian = pedestrian;
+        walkable = false;
+    }
+
+    public void removePedestrian(){
+        pedestrian = null;
+        walkable = true;
     }
 }

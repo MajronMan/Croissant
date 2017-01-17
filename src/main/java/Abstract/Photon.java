@@ -4,8 +4,10 @@ import Level.Map;
 import Level.Cell;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import static Engine.Constants.sight;
+import static java.lang.Math.min;
 
 /**
  * Created by MajronMan on 28.12.2016.
@@ -32,6 +34,7 @@ public class Photon {
     }
 
     public Photon(Vector direction, Cell myCell, double baseIntensity, double angle){
+        baseIntensity = min(1, baseIntensity);
         this.intensity = baseIntensity * KirchhoffAmendment(angle);
         this.myCell = myCell;
         this.direction = direction;
@@ -41,10 +44,13 @@ public class Photon {
         return 0.5*(1+Math.cos(Math.toRadians(angle)));
     }
 
-    private static double nextIntensity(double baseIntensity, double alfa, Vector target){
+    private static double nextIntensity(double baseIntensity, double alfa){
 //        double delta = target.distance(startingPoint);
 //        if(delta < 0.01) return 0;
-        return baseIntensity * KirchhoffAmendment(alfa)*0.8;
+        double c = Math.abs(Math.cos(Math.toRadians(alfa)));
+        if(c < 0.1 || c > 0.9) c = 1;
+
+        return baseIntensity * KirchhoffAmendment(alfa)*0.75;
     }
 
     public void HuygensKirchhoff(ArrayList<Photon> photons, Map map){
@@ -62,7 +68,7 @@ public class Photon {
             Cell nextCell = map.getCellAt(v2.getX(), v2.getY());
 
             if (nextCell != null) {
-                double nextIntensity = nextIntensity(intensity, alfa, nextCell.getPosition());
+                double nextIntensity = nextIntensity(intensity, alfa);
                 if(nextIntensity > 0.1){
                     Photon next = new Photon(v, nextCell, nextIntensity);
                     photons.add(next);

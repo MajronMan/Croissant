@@ -1,35 +1,41 @@
 package Items;
 
+import Abstract.Enums.StatTypes;
 import Abstract.Enums.Visuals;
 import Engine.GameController;
 import Engine.GameObject;
+import Engine.Stat;
 import Level.CellVisibility;
 import Level.Pavement;
 import javafx.scene.paint.Color;
 
 public class Item extends GameObject {
-    private String name;
-	private Stat Stats;
-	private String description;
+    protected String name;
+	protected Stat modifier;
+	protected String description;
     public Pavement whereILay;
     private static int i = 0;
 	//private String rarity;
 
     @Override
-    public void Interact() {
-        GameController.getPlayer().CollectItem(this);
-        whereILay.removeContent();
-        whereILay = null;
+    public boolean interact() {
+        if(GameController.getPlayer().CollectItem(this)) {
+            whereILay.removeContent();
+            whereILay = null;
+            return true;
+        }
+        else return false;
     }
     public Item(){
         whereILay = null;
     }
 
     public Item(Pavement cell){
-        name = Integer.toString(i++);
+        name = "Potion " + Integer.toString(++i);
         whereILay = cell;
         setVisual(Color.AQUAMARINE, Visuals.Diamond);
-        description = "Item no. " + Integer.toString(i);
+        description = "Healing potion";
+        modifier = new Stat(StatTypes.HP, 10, 0);
     }
 
     public String getName() {
@@ -46,13 +52,12 @@ public class Item extends GameObject {
         return null;
     }
 
+    public Stat getModifier() {
+        return modifier;
+    }
+
     @Override
-    public void draw() {
-//        CellVisibility visibility = getVisibility();
-//        if(visibility != null && visibility.isVisible())
-//            super.draw();
-//        else
-//            super.hide();
-        super.draw();
+    public String toString() {
+        return name;
     }
 }

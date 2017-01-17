@@ -9,8 +9,8 @@ public class NPC extends GameObject implements IInteractable {
 		// TODO - implement NPC.Talk
 		throw new UnsupportedOperationException();
 	}
-	public void Interact() {
-		// TODO - implement NPC.Interact
+	public boolean interact() {
+		// TODO - implement NPC.interact
 		throw new UnsupportedOperationException();
 	}
 

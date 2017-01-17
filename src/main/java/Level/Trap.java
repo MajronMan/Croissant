@@ -1,6 +1,6 @@
 package Level;
 
-import Items.Stat;
+import Engine.Stat;
 
 public class Trap extends Pavement{
 

@@ -2,21 +2,25 @@ import Engine.GameController;
 import Interface.UIwriter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.net.URL;
 
 import static Engine.Constants.*;
 
 public class Main extends Application {
+    private Stage stage;
+    private Scene scene;
     @Override
     public void start(Stage primaryStage) throws Exception{
         URL url = getClass().getResource("/sample.fxml");
@@ -35,11 +39,12 @@ public class Main extends Application {
         AnchorPane output = (AnchorPane) theScene.lookup("#Console");
         output.setPrefWidth(mapX*cellSize);
         UIwriter.setConsole((Text)output.getChildren().get(0));
-        UIwriter.consoleWrite("dupiszcze");
         UIwriter.setInventory((TextArea) theScene.lookup("#Inventory"));
         UIwriter.setInventoryItems((GridPane) theScene.lookup("#InventoryItems"));
         Button btn = (Button) theScene.lookup("#InventoryButton");
         GridPane eqPopup = (GridPane) theScene.lookup("#InventoryPopup");
+        UIwriter.setHP((Text) theScene.lookup("#HP"), (ProgressBar) theScene.lookup("#HPBar"));
+        UIwriter.setStats((TextArea) theScene.lookup("#Stats"));
         GameController.setGraphicsContext(canvas.getGraphicsContext2D());
         GameController.BeginGame();
 
@@ -48,6 +53,10 @@ public class Main extends Application {
 
         theScene.setOnKeyPressed(GameController::handleKeyboardInput);
         theScene.setOnMouseClicked(GameController::handleMouseInput);
+
+        theScene.getWindow().setOnCloseRequest((param) -> primaryStage.close());
+        stage = primaryStage;
+        scene = theScene;
 
         /*
         new AnimationTimer()
@@ -65,6 +74,13 @@ public class Main extends Application {
         */
 
         primaryStage.show();
+    }
+    public static void endScreen(){
+        TextArea ta = new TextArea("You died");
+        ta.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        ta.setMaxSize(SW, SH);
+        ta.setPrefSize(SW, SH);
+        ta.setMinSize(SW, SH);
     }
 
     private static void showPopup(AnchorPane root){

@@ -3,6 +3,8 @@ package Abstract;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.signum;
+
 /**
  * Created by MajronMan on 09.11.2016.
  */
@@ -56,11 +58,6 @@ public class Graph <T>{
     private ArrayList<Node> vertices;
     private ArrayList<Edge> edges;
 
-    private int sign(int a){
-        if(a < 0) return -1;
-        if(a == 0) return 0;
-        return 1;
-    }
 
     public Graph(){
         edges = new ArrayList<>();
@@ -101,7 +98,7 @@ public class Graph <T>{
         List<T> values = vertices.stream().map(u -> u.value).collect(Collectors.toList());
         FindAndUnion<T> forest = new FindAndUnion<>(values);
         PriorityQueue<Edge> left = new PriorityQueue<>(
-                (Comparator<Edge>) (o1, o2) -> sign(o1.weight - o2.weight)
+                (Comparator<Edge>) (o1, o2) -> signum(o1.weight - o2.weight)
         );
         left.addAll(edges);
 

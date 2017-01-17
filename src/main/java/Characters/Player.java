@@ -1,21 +1,24 @@
 package Characters;
 
 import Abstract.Enums.PlayerBody;
+import Abstract.Enums.StatTypes;
 import Abstract.Enums.Visuals;
 import Abstract.Vector;
 import Abstract.VisualRepresentation;
 import Engine.GameController;
+import Engine.GameObject;
+import Engine.Stat;
 import Interface.UIwriter;
 import Items.Equipment;
 import Items.Item;
 import Level.Map;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static Engine.Constants.cellSize;
 
 public class Player extends Fighting{
 
@@ -24,14 +27,22 @@ public class Player extends Fighting{
 	private HashMap<PlayerBody, Equipment> eq = new HashMap<>();
 	private String race;
     private Vector facing = new Vector(0, -1);
+    public Stat MaxHP;
+    private ObjectProperty<EventHandler<Event>> onDeath;
 
     public Player(){
+        super(Stat.playerStats);
+        MaxHP = new Stat(StatTypes.HP, 100, 0);
         findFirstWalkable();
         for (PlayerBody part :
                 PlayerBody.values()) {
             eq.put(part, null);
         }
         visual = new VisualRepresentation(Color.DARKSLATEBLUE, Visuals.ArrowU);
+    }
+
+    public Stat[] getHP(){
+        return new Stat[] {stats.get(StatTypes.HP), MaxHP};
     }
 
     private void findFirstWalkable(){
@@ -48,8 +59,10 @@ public class Player extends Fighting{
     }
 
 	public void Move(String dir){
+        if(!alive) return;
         int posX = position.getX(), posY = position.getY();
         Map theMap = GameController.getCurrentMap();
+        theMap.getCellAt(posX, posY).setWalkable(true);
         theMap.getCellAt(posX, posY).draw();
         int destx = posX, desty = posY;
         switch(dir) {
@@ -76,29 +89,40 @@ public class Player extends Fighting{
         }
         if(theMap.getCellAt(destx, desty).getWalkable()) {
             position = new Vector(destx, desty);
+            theMap.getCellAt(destx, desty).setWalkable(false);
         }
-        theMap.getCellAt(destx, desty).Interact();
         draw();
     }
 
     public void Equip(Equipment equipment){
         Equipment worn = eq.get(equipment.getMyPart());
-        if(worn != null)
+        if(worn != null) {
             backpack.add(worn);
+            Stat mod = worn.getModifier();
+            stats.get(mod.getMyType()).increase(-mod.getValue());
+        }
         eq.put(equipment.getMyPart(), equipment);
+        Stat mod = equipment.getModifier();
+        stats.get(mod.getMyType()).increase(mod.getValue());
     }
 
     public Vector getFacing() {
         return facing;
     }
 
-    public void Interact(){
+    public boolean interact(){
         //some popup on click
+        return true;
     }
 
-    public void CollectItem(Item item) {
+    public boolean CollectItem(Item item) {
+        if(backpack.size() > 29) {
+            UIwriter.consoleWrite("Inventory is full");
+            return false;
+        }
         backpack.add(item);
         UIwriter.itemAdded(item);
+        return true;
     }
 
     public void raytrace(){
@@ -108,12 +132,27 @@ public class Player extends Fighting{
     public int itemsCount() {
         return backpack.size();
     }
-/*
-    public void raytrace(){
-        for (double alfa = 0; alfa < 361; alfa+=45) {
-            GameController.getCurrentMap().getCellAt(
-                    position.getX(), position.getY()
-            ).getVisibility().propagateWave(new Vector(1.0, alfa));
+
+    @Override
+    public void takeHit(int howmuch, GameObject who){
+        super.takeHit(howmuch, who);
+        stats.get(StatTypes.HP).setValue(Math.min(stats.get(StatTypes.HP).getValue(), MaxHP.getValue()));
+        UIwriter.HPChanged();
+    }
+
+    public String toString() {
+        return "you";
+    }
+
+    public void useItem(Item item) {
+        if(item.getClass() == Equipment.class){
+            Equip((Equipment) item);
+            UIwriter.consoleWrite("Equipped " + item + " " + item.getModifier().getValue() + " " + item.getModifier().getMyType());
         }
-    }*/
+        else{
+            takeHit(10, item);
+            backpack.remove(item);
+        }
+        UIwriter.statsChanged();
+    }
 }

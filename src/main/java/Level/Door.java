@@ -8,7 +8,7 @@ public class Door extends Pavement {
 
 	private boolean isOpen;
 	private boolean hidden;
-    private Color[] colors = {Color.BLUEVIOLET, Color.FIREBRICK};
+    private Color[] colors = {Color.BLUEVIOLET, Color.PURPLE};
 
     public Door(){
         this(0, 0);
@@ -16,7 +16,7 @@ public class Door extends Pavement {
 
     public Door(int x, int y) {
         position = new Vector(x, y);
-        walkable = true;
+        walkable = false;
         setVisual(colors[1], Visuals.Square);
         mainColor = colors[1];
         visibility = new CellVisibility(false, true, this);
@@ -31,8 +31,11 @@ public class Door extends Pavement {
 	}
 
 	@Override
-    public void Interact(){
+    public boolean interact(){
+        if(pedestrian != null || content != null)
+            return false;
         toggleOpen();
+        return true;
     }
 
 }

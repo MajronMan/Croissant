@@ -1,10 +1,13 @@
 package Level;
 
 import Abstract.Vector;
+import Items.Equipment;
 import Items.Item;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static java.lang.Integer.signum;
 
 /**
  * Created by MajronMan on 16.11.2016.
@@ -92,16 +95,10 @@ public class Room{
         myMap.createCells(vectors, Wall.class);
     }
 
-    private int sign(int n){
-        if(n < 0) return -1;
-        if (n == 0) return 0;
-        return 1;
-    }
-
     public void drawPath(Room to){
         int cx = middleX(), cy = middleY(), tx = to.middleX(), ty = to.middleY();
-        int dx = sign(tx-cx);
-        int dy = sign(ty-cy);
+        int dx = signum(tx-cx);
+        int dy = signum(ty-cy);
         Random r = new Random();
 
         if(x > tx) {
@@ -127,8 +124,8 @@ public class Room{
         cy+=dy;
         myMap.createCell(cx, cy, Pavement.class);
         while(cx != tx || cy != ty){
-            dx = sign(tx-cx);
-            dy = sign(ty-cy);
+            dx = signum(tx-cx);
+            dy = signum(ty-cy);
             if(r.nextInt(6) == 0) {
                 if (cx != tx)
                     cx += dx;
@@ -176,7 +173,28 @@ public class Room{
         Random r = new Random();
         int ix = x+1+r.nextInt(w-2), iy = y+1+r.nextInt(h-2);
         Pavement cell = (Pavement) myMap.getCellAt(ix, iy);
-        cell.addContent(new Item(cell));
+        Item item;
+        if(r.nextBoolean()){
+            item = new Item(cell);
+        }
+        else
+            item = new Equipment(cell);
+
+        cell.addContent(item);
         return true;
+    }
+
+    public Vector randomInside(){
+        Random r = new Random();
+        int rx = x + r.nextInt(w-2)+1;
+        int ry = y + r.nextInt(h-2)+1;
+        return new Vector(rx, ry);
+    }
+
+    public Vector randomInsideNotByWall(){
+        Random r = new Random();
+        int rx = x + r.nextInt(w-3)+2;
+        int ry = y + r.nextInt(h-3)+2;
+        return new Vector(rx, ry);
     }
 }

@@ -1,6 +1,7 @@
 package Items;
 
 import Abstract.Enums.PlayerBody;
+import Engine.Stat;
 
 public class Weapon extends Equipment {
 	private Stat Damage;

@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * Created by MajronMan on 26.11.2016.
  */
-public class Exit extends Cell {
+public class Exit extends Pavement {
     int elevate;
 
     public Exit(){

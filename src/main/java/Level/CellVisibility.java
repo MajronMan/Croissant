@@ -74,7 +74,7 @@ public class CellVisibility {
     }
 
     public boolean isVisible() {
-        return visible;
+        return intensity > 0.151;
     }
 
     public void setVisible(boolean visible) {

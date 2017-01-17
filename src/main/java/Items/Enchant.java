@@ -1,5 +1,7 @@
 package Items;
 
+import Engine.Stat;
+
 public class Enchant {
 
 	private Stat modifier;

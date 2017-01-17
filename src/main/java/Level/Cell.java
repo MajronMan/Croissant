@@ -5,7 +5,6 @@ import Abstract.Interfaces.IDrawable;
 import Abstract.Vector;
 import Abstract.VisualRepresentation;
 import Engine.GameObject;
-import Interface.UIwriter;
 import javafx.scene.paint.Color;
 
 public class Cell extends GameObject implements IDrawable{
@@ -22,7 +21,7 @@ public class Cell extends GameObject implements IDrawable{
     public Cell(int x, int y, Color color){
         position = new Vector(x, y);
         visual = new VisualRepresentation(color, Visuals.Square, Color.BLACK);
-        visibility = new CellVisibility(true, false, this);
+        visibility = new CellVisibility(false, true, this);
         mainColor = color;
     }
 
@@ -35,15 +34,14 @@ public class Cell extends GameObject implements IDrawable{
         return walkable;
     }
 
-    public void Interact(){
-        UIwriter.consoleWrite(getClass().getName());
+    public boolean interact(){
+        return false;
     }
 
     public Map getMap(){return map;}
 
     public void draw(){
-        visual.setColor(Color.BLACK.interpolate(mainColor, visibility.intensity));
-        super.draw();
+        super.draw(Color.BLACK.interpolate(mainColor, visibility.intensity));
     }
 
 
@@ -73,5 +71,9 @@ public class Cell extends GameObject implements IDrawable{
 
     public double getIntensity() {
         return visibility.intensity;
+    }
+
+    public void setWalkable(boolean walkable) {
+        this.walkable = walkable;
     }
 }

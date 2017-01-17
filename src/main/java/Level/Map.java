@@ -3,9 +3,11 @@ package Level;
 import Abstract.Graph;
 import Abstract.Interfaces.IDrawable;
 import Abstract.Vector;
+import Characters.Enemy;
 import Engine.GameController;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Random;
 
 import static Engine.Constants.mapX;
 import static Engine.Constants.mapY;
+import static java.lang.Integer.signum;
 
 public class Map implements IDrawable{
 
@@ -43,6 +46,24 @@ public class Map implements IDrawable{
         drawCorridors();
         createExits();
 	}
+
+	// for tests only
+	public Map(boolean [][] cells, int x, int y){
+        this.x = x;
+        this.y = y;
+        Cells = new Cell[y][x];
+        for (int i = 0; i < y; i++) {
+            for (int j = 0; j < x; j++) {
+                if(cells[i][j]) {
+                    Cells[i][j] = new Pavement(j, i);
+                }
+                else {
+                    Cells[i][j] = new Wall(j, i);
+                }
+                Cells[i][j].setMap(this);
+            }
+        }
+    }
 
     private void drawCorridors() {
         for(Graph.Edge e : roomGraph.Kruskal()){
@@ -374,5 +395,52 @@ public class Map implements IDrawable{
         if( v.equals(entry))
             return -1;
         return 0;
+    }
+
+    public void generateEnemies(){
+        Random r = new Random();
+        for(int i=0; i<10; i++){
+            int rn = r.nextInt(Rooms.size());
+            GameController.addEnemy( addEnemy(Rooms.get(rn)));
+        }
+    }
+    private Enemy addEnemy(Room room){
+        Enemy enemy = Enemy.newRandomStats(this);
+        Vector inside = room.randomInside();
+        enemy.setPosition(inside);
+        ((Pavement) getCellAt(inside)).addPedestrian(enemy);
+        System.out.println(inside);
+        return enemy;
+    }
+
+    private Cell pathStep(Vector from, Vector to){
+        Vector delta = to.substract(from);
+        Vector signs = new Vector(signum(delta.getX()), signum(delta.getY()));
+        ArrayList<Vector> possibilities = new ArrayList<>();
+        possibilities.add(from.sum(signs));
+        if(signs.getY() != 0 && signs.getX() != 0){
+            possibilities.add(from.sum(new Vector(signs.getX(), 0)));
+            possibilities.add(from.sum(new Vector(0, signs.getY())));
+        }
+        for(Vector v: possibilities){
+            Cell pav = getCellAt(v);
+            if(pav != null && pav.getWalkable())
+                return pav;
+        }
+        return null;
+    }
+
+    public ArrayList<Cell> getPath(Vector from, Vector to){
+        Cell next = pathStep(from, to);
+        if(next == null) return null;
+        ArrayList<Cell> ret = new ArrayList<>();
+        while(to.distance(from)>1.5){
+            ret.add(next);
+            next = pathStep(from, to);
+            if(next == null)
+                return null;
+            from = next.getPosition();
+        }
+        return ret;
     }
 }

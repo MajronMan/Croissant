@@ -1,5 +1,10 @@
 package Abstract;
 
+import java.util.Random;
+
+import static java.lang.Integer.signum;
+import static java.lang.Math.abs;
+
 /**
  * Created by MajronMan on 23.11.2016.
  */
@@ -73,6 +78,15 @@ public class Vector {
 
     public double r() { return Math.sqrt(x*x + y*y);}
 
+    public int intDistance(Vector to){
+        if(to.equals(this))
+            return 0;
+        Vector delta = to.substract(this);
+        if(abs(delta.x) > 0 && abs(delta.y) > 0)
+            signum(delta.x);
+        return 2;
+    }
+
     public Vector snapToDir(){
         double nx = x/r(), ny = y/r();
         return new Vector((int)Math.round(nx), (int)Math.round(ny));
@@ -100,6 +114,21 @@ public class Vector {
 
     public Vector rotate(double degAngle){
         return new Vector(r(), alfa()+Math.toRadians(degAngle));
+    }
+
+    public static Vector randomDirection(){
+        Random r = new Random();
+        return new Vector(1.0, 45.0*r.nextInt(9));
+    }
+
+    public Vector getNextStep(Vector target){
+        int dx = target.getX() - x;
+        int dy = target.getY() - y;
+        if(dx != 0)
+            return new Vector(signum(dx), 0);
+        if(dy != 0)
+            return new Vector(0, signum(dy));
+        return new Vector(0, 0);
     }
 
 }

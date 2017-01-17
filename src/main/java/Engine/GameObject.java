@@ -40,9 +40,13 @@ public abstract class GameObject implements IDrawable, IInteractable {
         return position;
     }
 
-	public void draw() {
+    public void draw(){
+        draw(visual.getColor());
+    }
+
+	public void draw(Color color) {
         GraphicsContext graphicsContext = GameController.getGraphicsContext();
-        graphicsContext.setFill(visual.getColor());
+        graphicsContext.setFill(color);
         int bx, by, bsize;
         int size = bsize = cellSize;
         int x = bx = position.getX()*cellSize, y = by = position.getY()*cellSize;

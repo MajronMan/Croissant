@@ -19,9 +19,4 @@ public class Wall extends Cell {
 		// TODO - implement Wall.Destroy
 		throw new UnsupportedOperationException();
 	}
-
-    @Override
-    public void Interact() {
-        UIwriter.consoleWrite(visibility.opaque? "yes":"no");
-    }
 }
