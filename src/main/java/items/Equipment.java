@@ -1,8 +1,8 @@
 package items;
 
-import immaterial.Enums.PlayerBody;
-import immaterial.Enums.StatTypes;
-import immaterial.Enums.Visuals;
+import immaterial.enums.PlayerBody;
+import immaterial.enums.StatTypes;
+import immaterial.enums.Visuals;
 import engine.Stat;
 import level.Pavement;
 import javafx.scene.paint.Color;

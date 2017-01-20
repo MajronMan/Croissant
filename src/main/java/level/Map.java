@@ -1,7 +1,7 @@
 package level;
 
 import immaterial.Graph;
-import immaterial.Interfaces.IDrawable;
+import immaterial.interfaces.IDrawable;
 import immaterial.Vector;
 import characters.Enemy;
 import engine.GameController;

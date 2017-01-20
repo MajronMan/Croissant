@@ -1,4 +1,4 @@
-package immaterial.Interfaces;
+package immaterial.interfaces;
 
 /**
  * Created by MajronMan on 30.11.2016.

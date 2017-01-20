@@ -1,8 +1,8 @@
 package characters;
 
-import immaterial.Enums.PlayerBody;
-import immaterial.Enums.StatTypes;
-import immaterial.Enums.Visuals;
+import immaterial.enums.PlayerBody;
+import immaterial.enums.StatTypes;
+import immaterial.enums.Visuals;
 import immaterial.Vector;
 import immaterial.VisualRepresentation;
 import engine.GameController;

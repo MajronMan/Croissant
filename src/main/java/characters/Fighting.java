@@ -1,7 +1,7 @@
 package characters;
 
-import immaterial.Enums.StatTypes;
-import immaterial.Interfaces.IMoving;
+import immaterial.enums.StatTypes;
+import immaterial.interfaces.IMoving;
 import engine.GameObject;
 import engine.Stat;
 import gui.UIwriter;

@@ -1,6 +1,6 @@
 package level;
 
-import immaterial.Enums.Visuals;
+import immaterial.enums.Visuals;
 import immaterial.Vector;
 import javafx.scene.paint.Color;
 

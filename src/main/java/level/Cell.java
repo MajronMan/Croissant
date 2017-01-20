@@ -1,7 +1,7 @@
 package level;
 
-import immaterial.Enums.Visuals;
-import immaterial.Interfaces.IDrawable;
+import immaterial.enums.Visuals;
+import immaterial.interfaces.IDrawable;
 import immaterial.Vector;
 import immaterial.VisualRepresentation;
 import engine.GameObject;

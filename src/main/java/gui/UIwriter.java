@@ -3,7 +3,7 @@ package gui;
 import engine.GameController;
 import engine.Stat;
 import engine.Statics;
-import immaterial.Enums.StatTypes;
+import immaterial.enums.StatTypes;
 import items.Equipment;
 import items.Item;
 import javafx.scene.control.Button;

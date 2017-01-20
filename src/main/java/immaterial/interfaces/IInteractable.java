@@ -1,4 +1,4 @@
-package immaterial.Interfaces;
+package immaterial.interfaces;
 
 public interface IInteractable {
 

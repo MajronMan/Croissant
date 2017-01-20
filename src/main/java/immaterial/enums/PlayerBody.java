@@ -1,4 +1,4 @@
-package immaterial.Enums;
+package immaterial.enums;
 
 /**
  * Created by MajronMan on 30.11.2016.

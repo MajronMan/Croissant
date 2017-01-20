@@ -1,9 +1,9 @@
 package engine;
 
 import immaterial.*;
-import immaterial.Enums.Visuals;
-import immaterial.Interfaces.IDrawable;
-import immaterial.Interfaces.IInteractable;
+import immaterial.enums.Visuals;
+import immaterial.interfaces.IDrawable;
+import immaterial.interfaces.IInteractable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;

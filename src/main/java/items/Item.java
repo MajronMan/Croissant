@@ -1,11 +1,10 @@
 package items;
 
-import immaterial.Enums.StatTypes;
-import immaterial.Enums.Visuals;
+import immaterial.enums.StatTypes;
+import immaterial.enums.Visuals;
 import engine.GameController;
 import engine.GameObject;
 import engine.Stat;
-import level.CellVisibility;
 import level.Pavement;
 import javafx.scene.paint.Color;
 

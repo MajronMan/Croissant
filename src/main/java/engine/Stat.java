@@ -1,6 +1,6 @@
 package engine;
 
-import immaterial.Enums.StatTypes;
+import immaterial.enums.StatTypes;
 
 import java.util.HashMap;
 
