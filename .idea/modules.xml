@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Croissant.iml" filepath="$PROJECT_DIR$/.idea/modules/Croissant.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Croissant_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Croissant_main.iml" group="Croissant" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Croissant_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Croissant_test.iml" group="Croissant" />
     </modules>
   </component>
 </project>
